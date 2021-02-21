@@ -101,18 +101,22 @@ public struct Theme {
             if let bodyStyles = allStyles["body"] as? [String: AnyObject] {
                 if var parsedBodyStyles = parse(bodyStyles) {
                     if #available(iOS 13.0, *) {
+                        #if os(iOS)
                         if parsedBodyStyles[NSAttributedString.Key.foregroundColor] == nil {
                             parsedBodyStyles[NSAttributedString.Key.foregroundColor] = UniversalColor.label
                         }
+                        #endif
                     }
                     body = Style(element: .body, attributes: parsedBodyStyles)
                 }
             }
             else { // Create a default body font so other styles can inherit from it.
                 var textColor = UniversalColor.black
+                #if os(iOS)
                 if #available(iOS 13.0, *) {
                     textColor = UniversalColor.label
                 }
+                #endif
                 let attributes = [NSAttributedString.Key.foregroundColor: textColor]
                 body = Style(element: .body, attributes: attributes)
             }
