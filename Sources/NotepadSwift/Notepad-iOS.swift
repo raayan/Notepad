@@ -9,11 +9,9 @@
 #if os(iOS)
 import UIKit
 
-public class Notepad: UITextView {
-
-    var storage: Storage = Storage()
-
-
+public class Notepad: UITextView, UITextViewDelegate {
+    public var onTextChange: (String) -> Void = { _ in }
+    public var storage: Storage = Storage()
 
     /// Creates a new Notepad.
     ///
@@ -44,13 +42,14 @@ public class Notepad: UITextView {
 
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         let layoutManager = NSLayoutManager()
-        let containerSize = CGSize(width: frame.size.width, height: CGFloat.greatestFiniteMagnitude)
+        let containerSize = CGSize(width: frame.size.width, height: frame.size.height)
         let container = NSTextContainer(size: containerSize)
         container.widthTracksTextView = true
 
         layoutManager.addTextContainer(container)
         storage.addLayoutManager(layoutManager)
         super.init(frame: frame, textContainer: container)
+        self.delegate = self
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -59,9 +58,13 @@ public class Notepad: UITextView {
         let containerSize = CGSize(width: frame.size.width, height: CGFloat.greatestFiniteMagnitude)
         let container = NSTextContainer(size: containerSize)
         container.widthTracksTextView = true
-
         layoutManager.addTextContainer(container)
         storage.addLayoutManager(layoutManager)
+        self.delegate = self
+    }
+
+    public func textViewDidChange(_ textView: UITextView) {
+        onTextChange(textView.text)
     }
 }
 #endif
